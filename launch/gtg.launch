@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="go_to_goal" type="gtg.py" name="go_to_goal"/>
+  <node pkg="go_to_goal" type="goal_test.py" name="goal_test"/>
+  <node pkg="go_to_goal" type="test.py" name="test_pos"/>
+</launch>
