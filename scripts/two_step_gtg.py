@@ -35,6 +35,8 @@ current_enc_y = 0       # current encoder distance recorded
 screenshot_x = 0        # the value of x to compare to
 screenshot_y = 0        # the value of y to compare to
 
+prev_x_g = 0
+prev_y_g = 0
 
 def robot_current_pos_callback(pos):
     global x, y, theta
@@ -87,7 +89,7 @@ def check_encoders_approach():
         rospy.sleep(0.5)
 
 def get_twist(x, y, theta, xy_g):
-    global i
+    global i, prev_x_g, prev_y_g
 
     # for the first run, get the number of goals and store it in i
     if not i:
@@ -105,8 +107,11 @@ def get_twist(x, y, theta, xy_g):
         y_g = ((xy_g[i-1])-1)* grid_size
 
         # this function will update the goal for the encoder to make it's checks
-        update_encoders_goal()
-
+        if (prev_x_g != x_g) and (prev_y_g != y_g):
+                    update_encoders_goal()
+        prev_x_g = x_g 
+        prev_y_g = y_g 
+        
         # this is the main GTG loop
         if not flag:
             # this function will cause a delay if the robot approaches the target
