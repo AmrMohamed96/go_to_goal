@@ -1,5 +1,16 @@
 <launch>
-  <node pkg="go_to_goal" type="gtg.py" name="go_to_goal"/>
-  <node pkg="go_to_goal" type="goal_test.py" name="goal_test"/>
-  <node pkg="go_to_goal" type="test.py" name="test_pos"/>
+  <!-- MOTION CONTROL HARDWARE CONTROL LAUNCH FILE -->
+  <include file="$(find motion_control)/launch/motion_control.launch" />
+
+  <!-- GO TO GOAL NODES -->
+  <node pkg="go_to_goal" type="mod_go1.py" name="go_to_goal_rob1"/>
+
+  <!-- PATH PLANNING NODES -->
+  <node pkg="pathplanning" type="a_star_ros1.py" name="astar_rob1"/>
+
+  <!-- FORMATION NODES
+  <node pkg="swarm_formation_19" type="formation.py" name="formation_rob1">
+    <rosparam param="robot_id">1</rosparam>
+  </node>
+  -->
 </launch>
