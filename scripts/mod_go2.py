@@ -52,7 +52,7 @@ def gtg_talker():
 
 def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global reference frame
     global i
-    print ("len", len(xy_g))
+    #print ("len", len(xy_g))
 
     """
     ################ For MATLAB ###################
@@ -85,12 +85,12 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
     ""
     ################ For last year's ##############
     if i<len(xy_g):
-        print("i",i)
+        #print("i",i)
         flage=0
         x_g = (xy_g[i])*17.5
         y_g = (xy_g[i+1])*17.5
-        print ("x ",x_g)
-        print ("y ",y_g)
+        #print ("x ",x_g)
+        #print ("y ",y_g)
         ""
         if(flage==0):
             # get the error in the global reference frame
@@ -147,7 +147,7 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
         #cmd_vel_publisher2.publish(gtg_flag)
 
         if(gr_x==0 and gr_y==0):
-            print("flage")
+            print("Reached one of the goals in the list")
             flage=1
         if(flage==1):
 
@@ -184,7 +184,7 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
             gtg_flag = 1
             twist.linear.x  = 0; twist.linear.y  = 0; twist.linear.z  = 0;
             twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0;
-            print("i",i)
+            #print("i",i)
             cmd_vel_publisher1.publish(twist)
 
             if (flag_send == 0):

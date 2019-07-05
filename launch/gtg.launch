@@ -7,10 +7,4 @@
 
   <!-- PATH PLANNING NODES -->
   <node pkg="pathplanning" type="a_star_ros1.py" name="astar_rob1"/>
-
-  <!-- FORMATION NODES
-  <node pkg="swarm_formation_19" type="formation.py" name="formation_rob1">
-    <rosparam param="robot_id">1</rosparam>
-  </node>
-  -->
 </launch>
