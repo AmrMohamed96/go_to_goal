@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-"""
-"""
 import roslib
 import rospy
 from std_msgs.msg import Int32
@@ -9,13 +7,14 @@ from geometry_msgs.msg import Twist
 import math
 from math import pi
 
-i = 0
 flag_send = 0
-    #Publishers
+i = 0
+
+#Publishers
 cmd_vel_publisher1 = rospy.Publisher('cmd_vel_rob4', Twist, queue_size = 5)
 cmd_vel_publisher2 = rospy.Publisher('gtg_flag_rob4',Int32 , queue_size = 5)
 
-## Robot 4 Positions
+## Robot 1 Positions
 # Current Position
 x = 0
 y = 0
@@ -23,25 +22,25 @@ theta = 0
 # Target Position
 xyg = list()
 
-def Robot4(pos):
+def Robot1(pos):
     global x, y, theta
     x = pos.data[0]
     y = pos.data[1]
     theta = pos.data[2]/100.0 #in rad
 
-def goal4(head):
+def goal1(head):
     global xyg
     xyg = head.data
     #get_twist(x,y,theta,xyg)
-    #print("goal4")
+    #print("goal1")
 
 def gtg_talker():
     rospy.init_node('go_to_goal4')
     rospy.loginfo("%s started" % rospy.get_name())
     #print("talker")
     #Subscribers
-    rospy.Subscriber('rob4_CurrentPose', Int32MultiArray,Robot4)
-    rospy.Subscriber('Planning_Output4', Int32MultiArray, goal4)
+    rospy.Subscriber('rob4_CurrentPose', Int32MultiArray,Robot1)
+    rospy.Subscriber('Planning_Output4', Int32MultiArray, goal1)
     #Publishing Rate
     rate = rospy.Rate(10)
 
@@ -52,7 +51,7 @@ def gtg_talker():
 
 def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global reference frame
     global i
-    #print ("length",len(xy_g))
+    #print ("l", len(xy_g))
 
     """
     ################ For MATLAB ###################
@@ -82,9 +81,8 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
             print('y',y_g)
             #print("in while1")
     """
-    ""
-    ################ For last year's ##############
 
+    ################ For last year's ##############
     if i<len(xy_g):
         #print("i",i)
         flage=0
@@ -92,7 +90,7 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
         y_g = (xy_g[i+1])*17.5
         #print ("x ",x_g)
         #print ("y ",y_g)
-        ""
+
         if(flage==0):
             # get the error in the global reference frame
             error_x  = x_g  - x
@@ -104,8 +102,8 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
                 error_x = 0
             if((error_y>=-3) and (error_y<=3)):
                 error_y = 0
-            #print("error_x",error_x)
-            #print("error_y",error_y)
+
+
                   # get the error in the robot's reference frame
                   # @Xreference//Ycam
             gr_y  = error_x*math.cos(theta)  + error_y*math.sin(theta) #takes rad
@@ -115,8 +113,6 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
             #gr_x  = -(error_x*math.cos(theta)  + error_y*math.sin(theta)) #takes rad
             #gr_y  = -error_x*math.sin(theta) + error_y*math.cos(theta)
 
-            #print("gr_y",gr_y)
-            #print("gr_x",gr_x)
 
                   # calculate rho and alfa
             rho  = math.sqrt(gr_x**2+gr_y**2) #in cm
@@ -124,7 +120,7 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
                   # define controller gains
             K_RHO = 1.4 # 0.6 doesn't work fine with me
                   #(robot becomes unstable a bit after arriving to the desired pose)
-            K_ALPHA = 0.5; #K_THETA = 0.5
+            K_ALPHA = 0.5 #K_THETA = 0.5
                   #calculate control commands
             v     = K_RHO*rho       # in cm/sec             # v = linear velocity command
             omega = K_ALPHA*alfa    # in rad/sec            # omega = angular velocity command
@@ -134,22 +130,32 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
             gtg_flag = 0
 
             if((omega<=0.2) and (omega>=-0.2)):
-                omega = 0;
+                omega = 0
+
             if (omega!=0):
-                twist.linear.x  = 0; twist.linear.y  = 0; twist.linear.z  = 0;
-                twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = omega;
+                twist.linear.x  = 0
+                twist.linear.y  = 0 
+                twist.linear.z  = 0
+                twist.angular.x = 0 
+                twist.angular.y = 0 
+                twist.angular.z = omega
 
             elif (omega == 0):
-                twist.linear.x  = v; twist.linear.y  = 0; twist.linear.z  = 0;
-                twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0;
+                twist.linear.x  = v 
+                twist.linear.y  = 0
+                twist.linear.z  = 0
+                twist.angular.x = 0
+                twist.angular.y = 0
+                twist.angular.z = 0
             #print("going to publish")
-            #print("publishing1")
+
         cmd_vel_publisher1.publish(twist)
         #cmd_vel_publisher2.publish(gtg_flag)
 
         if(gr_x==0 and gr_y==0):
             print("Reached one of the goals in the list")
             flage=1
+            
         if(flage==1):
 
             """
@@ -169,29 +175,38 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
             flag_send = 1
         """
 
-            ""
             ############## For last year's ###############
             i+=2
     else:
+        global flag_send
         if len(xy_g)==0:
             twist = Twist()
-            twist.linear.x  = 0; twist.linear.y  = 0; twist.linear.z  = 0;
-            twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0;
+            twist.linear.x  = 0 
+            twist.linear.y  = 0 
+            twist.linear.z  = 0
+            twist.angular.x = 0 
+            twist.angular.y = 0 
+            twist.angular.z = 0
             cmd_vel_publisher1.publish(twist)
+
         else:
-            global flag_send
             twist = Twist()
             gtg_flag = Int32()
             gtg_flag = 1
-            twist.linear.x  = 0; twist.linear.y  = 0; twist.linear.z  = 0;
-            twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0;
+
+            twist.linear.x  = 0 
+            twist.linear.y  = 0
+            twist.linear.z  = 0
+            twist.angular.x = 0
+            twist.angular.y = 0
+            twist.angular.z = 0
             #print("i",i)
             cmd_vel_publisher1.publish(twist)
 
             if (flag_send == 0):
                 cmd_vel_publisher2.publish(gtg_flag)
                 flag_send = 1
-            ""
+                rospy.loginfo('GTG finished and raised the flag')
 
 if __name__ == '__main__':
     try:
