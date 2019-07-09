@@ -186,7 +186,7 @@ def get_twist(x, y, theta, xy_g):# arguments are the robot's pose in the global 
             gtg_flag = 1
             twist.linear.x  = 0; twist.linear.y  = 0; twist.linear.z  = 0;
             twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0;
-            print("i",i)
+            #print("i",i)
             cmd_vel_publisher1.publish(twist)
 
             if (flag_send == 0):
